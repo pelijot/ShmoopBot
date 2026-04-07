@@ -28,12 +28,15 @@ class RockPaperScissors(commands.Cog):
 
         if message.author == self.bot.user:
             return
+        if self.bot.user not in message.mentions:
+            return
+        
 
-        content = message.content.lower().strip()
+        parts = message.content.lower().strip().split()
 
-        if content in self.choices:
-
-            user_choice = content
+        if len(parts) == 2 and parts[1] in self.choices:
+            
+            user_choice = parts[1]
             bot_choice = random.choice(self.choices)
 
             if user_choice == bot_choice:
