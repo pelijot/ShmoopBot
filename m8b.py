@@ -29,7 +29,7 @@ async def on_message(message):
 #    if message.author == client.user:
 #        return
 
-    if message.content.startswith(f"<@{client.application_id}>"):
+    if client.user in message.mentions:
         lucky_num = random.randint(0,len(response_list) - 1)
         win_game = random.randint(0,10000)
         await message.reply(response_list[lucky_num])
