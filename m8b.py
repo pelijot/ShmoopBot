@@ -56,6 +56,15 @@ class Magic8Ball(commands.Cog):
         if not self.response_list:
             log.warning("Response list is empty, skipping reply")
             return
+        
+
+        # Hackery anti-double reply i need to fix
+        self.choices = ["rock", "paper", "scissors"]
+        parts = message.content.lower().strip().split()
+        if len(parts) == 2 and parts[1] in self.choices:
+            return
+        
+        
 
         response = random.choice(self.response_list)
         random_win = random.randint(1, self.chance)
