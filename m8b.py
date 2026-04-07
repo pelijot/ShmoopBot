@@ -1,56 +1,52 @@
-import discord
-from dotenv import dotenv_values
-import random
+import logging
 import math
-import os
+import random
 import time
 
-config = dotenv_values(".env")
+from discord.ext import commands
 
-token = config.get("TOKEN")
-chance = int(config.get("WINCHANCE"))
-
-intents = discord.Intents.default()
-intents.message_content = True
-
-bot = discord.Client(intents=intents)
+log = logging.getLogger("m8b")
 
 with open("response.list", "r") as f:
     response_list = [line.strip() for line in f if line.strip()]
 
-print(response_list)
 
-def get_closenesss(number, goal):
+def get_closeness(number, goal):
     difference = abs(number - goal)
     closeness_percent = (1 - difference / goal) * 100
     return math.trunc(closeness_percent)
 
 
-@bot.event
-async def on_ready():
-    print(f"Logged in as {bot.user}")
+class Magic8Ball(commands.Cog):
+    def __init__(self, bot, config):
+        self.bot = bot
+        self.chance = int(config.get("WINCHANCE"))
 
-@bot.event
-async def on_message(message):
-#    if message.author == bot.user:
-#        return
-
-    if bot.user in message.mentions:
-        random_msg = random.randint(0,len(response_list) - 1)
-        random_win = random.randint(1,chance)
-        if random_win == chance:
-            await message.reply("You just won free access to the Steam (PC Version) of A Webbing Journey! Please contact <@701464203252203551>")
-            print(f"@{message.author} won [{get_closenesss(random_win, chance)}%]")
-            with open("win.log", "a") as winlog:
-                winlog.write(f"{message.author} (ID: {message.author.id}) on {time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime())}\n")
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if self.bot.user not in message.mentions:
             return
-        await message.reply(response_list[random_msg])
-        print(f"Replied '{response_list[random_msg]}' ({random_msg}) to @{message.author} [{get_closenesss(random_win, chance)}%]")
-       
+        if message.author == self.bot.user and not message.content.startswith("<@{self.bot.application_id}>"):
+            return
+    
+        response = random.choice(response_list)
+        random_win = random.randint(1, self.chance)
 
-bot.run(token)
+        if random_win == self.chance:
+            await message.reply(
+                "You just won free access to the Steam (PC Version) of A Webbing Journey!"
+                "Please contact <@701464203252203551>"
+            )
+            log.info(f"@{message.author} won [{get_closeness(random_win, self.chance)}%]")
+            with open("win.log", "a") as winlog:
+                winlog.write(
+                    f"{message.author} (ID: {message.author.id}) on "
+                    f"{time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime())}\n"
+                )
+            return
 
-
-# https://github.com/justinbaur/m8b/tree/master
-
-
+        await message.reply(response)
+        log.info(
+            f"Replied '{response}' to @{message.author} "
+            f"[{get_closeness(random_win, self.chance)}%]"
+        )
