@@ -74,6 +74,7 @@ class Magic8Ball(commands.Cog):
             return
 
         await message.reply(response)
+        await self.bot.process_commands(message)
         log.info(
             f"Replied '{response}' to @{message.author} "
             f"[{get_closeness(random_win, self.chance)}%]"

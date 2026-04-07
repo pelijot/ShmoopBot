@@ -10,11 +10,11 @@ log = logging.getLogger("rps")
 
 
 class RockPaperScissors(commands.Cog):
-    def __init__(self, bot, config):
+    def __init__(self, bot):
         self.bot = bot
 
 
-        self.choises = ["rock", "paper", "scissors"]
+        self.choices = ["rock", "paper", "scissors"]
         self.wins_against = {
             "rock": "scissors",
             "paper": "rock",
@@ -50,7 +50,7 @@ class RockPaperScissors(commands.Cog):
                 f"I chose **{bot_choice}**\n"
                 f"{result}"
             )
-
+            await self.bot.process_commands(message)
             log.info(
                 f"User: {user_choice} | Bot: {bot_choice} | Result: {result} (@{message.author})"
             )

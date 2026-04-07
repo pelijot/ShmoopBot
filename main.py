@@ -8,6 +8,7 @@ from dotenv import dotenv_values
 
 from m8b import Magic8Ball, load_responses
 from close import AutoClose
+from rps import RockPaperScissors
 
 log = logging.getLogger("main")
 
@@ -69,6 +70,7 @@ def main():
         m8b = Magic8Ball(bot, config)
         m8b.response_list = await load_responses(config)
         await bot.add_cog(m8b)
+        await bot.add_cog(RockPaperScissors(bot))
         await bot.add_cog(AutoClose(bot))
         bot.loop.create_task(stdin_listener(bot))
 
