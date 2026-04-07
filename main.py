@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import sys
 
@@ -5,11 +6,10 @@ import discord
 from discord.ext import commands
 from dotenv import dotenv_values
 
-from m8b import Magic8Ball
+from m8b import Magic8Ball, load_responses
 from close import AutoClose
 
-config = dotenv_values(".env")
-token = config.get("TOKEN")
+log = logging.getLogger("main")
 
 
 def setup_logging():
@@ -26,13 +26,34 @@ def setup_logging():
     root.setLevel(logging.INFO)
     root.addHandler(handler)
 
-    # Quiet down discord.py's own verbose logging
     logging.getLogger("discord").setLevel(logging.WARNING)
+
+
+async def reload_all(bot):
+    config = dotenv_values(".env")
+    log.info("Reloading config and response list...")
+
+    m8b_cog = bot.get_cog("Magic8Ball")
+    if m8b_cog:
+        await m8b_cog.reload(config)
+
+    log.info("Reload complete")
+
+
+async def stdin_listener(bot):
+    loop = asyncio.get_event_loop()
+    while True:
+        line = await loop.run_in_executor(None, sys.stdin.readline)
+        key = line.strip().lower()
+        if key == "r":
+            await reload_all(bot)
 
 
 def main():
     setup_logging()
-    log = logging.getLogger("main")
+
+    config = dotenv_values(".env")
+    token = config.get("TOKEN")
 
     intents = discord.Intents.default()
     intents.message_content = True
@@ -45,8 +66,11 @@ def main():
         log.info(f"Logged in as {bot.user}")
 
     async def setup():
-        await bot.add_cog(Magic8Ball(bot, config))
+        m8b = Magic8Ball(bot, config)
+        m8b.response_list = await load_responses(config)
+        await bot.add_cog(m8b)
         await bot.add_cog(AutoClose(bot))
+        bot.loop.create_task(stdin_listener(bot))
 
     bot.setup_hook = setup
 

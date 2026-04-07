@@ -3,12 +3,10 @@ import math
 import random
 import time
 
+import aiohttp
 from discord.ext import commands
 
 log = logging.getLogger("m8b")
-
-with open("response.list", "r") as f:
-    response_list = [line.strip() for line in f if line.strip()]
 
 
 def get_closeness(number, goal):
@@ -17,24 +15,54 @@ def get_closeness(number, goal):
     return math.trunc(closeness_percent)
 
 
+async def load_responses(config):
+    online = config.get("RS_ONLINE", "false").lower() == "true"
+    location = config.get("RS_LOCATION", "response.list")
+
+    if online:
+        log.info(f"Fetching response list from {location}")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(location) as resp:
+                resp.raise_for_status()
+                text = await resp.text()
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+    else:
+        log.info(f"Loading response list from local file: {location}")
+        with open(location, "r") as f:
+            lines = [line.strip() for line in f if line.strip()]
+
+    log.info(f"Loaded {len(lines)} responses")
+    return lines
+
+
 class Magic8Ball(commands.Cog):
     def __init__(self, bot, config):
         self.bot = bot
-        self.chance = int(config.get("WINCHANCE"))
+        self.response_list = []
+        self.special = config.get("SPECIAL", "false").lower() == "true"
+        self.chance = int(config.get("SPECIAL_CHANCE", "1000"))
+
+    async def reload(self, config):
+        self.special = config.get("SPECIAL", "false").lower() == "true"
+        self.chance = int(config.get("SPECIAL_CHANCE", "1000"))
+        self.response_list = await load_responses(config)
 
     @commands.Cog.listener()
     async def on_message(self, message):
         if self.bot.user not in message.mentions:
             return
-        if message.author == self.bot.user and not message.content.startswith(f"<@{self.bot.application_id}>"):
+        if message.author == self.bot.user:
             return
-    
-        response = random.choice(response_list)
+        if not self.response_list:
+            log.warning("Response list is empty, skipping reply")
+            return
+
+        response = random.choice(self.response_list)
         random_win = random.randint(1, self.chance)
 
-        if random_win == self.chance:
+        if self.special and random_win == self.chance:
             await message.reply(
-                "You just won free access to the Steam (PC Version) of A Webbing Journey!"
+                "You just won free access to the Steam (PC Version) of A Webbing Journey! "
                 "Please contact <@701464203252203551>"
             )
             log.info(f"@{message.author} won [{get_closeness(random_win, self.chance)}%]")
