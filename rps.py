@@ -29,14 +29,11 @@ class RockPaperScissors(commands.Cog):
         if message.author == self.bot.user:
             return
 
-        content = message.content.lower()
+        content = message.content.lower().strip()
 
-        if content.startswith(tuple(self.choices)):
+        if content in self.choices
 
-            user_choice = next(
-                choice for choice in self.choices if content.startswith(choice)
-            )
-
+            user_choice = content
             bot_choice = random.choice(self.choices)
 
             if user_choice == bot_choice:
