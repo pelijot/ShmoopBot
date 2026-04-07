@@ -62,8 +62,8 @@ class Magic8Ball(commands.Cog):
 
         if self.special and random_win == self.chance:
             await message.reply(
-                "You just won free access to the Steam (PC Version) of A Webbing Journey! "
-                "Please contact <@701464203252203551>"
+                "Shmoop"
+                "(this message is a 1 in 1000)"
             )
             log.info(f"@{message.author} won [{get_closeness(random_win, self.chance)}%]")
             with open("win.log", "a") as winlog:
