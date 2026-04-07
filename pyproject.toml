@@ -1,6 +1,6 @@
 [project]
 name = "shmoopbot"
-version = "0.1.1"
+version = "0.1.5"
 description = "A Discord bot for the Fire Totem Games Discord server"
 readme = "README.md"
 requires-python = ">=3.8"

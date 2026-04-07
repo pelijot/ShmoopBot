@@ -45,7 +45,7 @@ async def on_message(message):
                 winlog.write(f"{message.author} (ID: {message.author.id}) on {time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime())}\n")
             return
         await message.reply(response_list[random_msg])
-        print(f"Replied '{response_list[random_msg]}' ({random_msg}) to @{message.author} [{get_closenesss(random_win, chance)}% {random_win}]")
+        print(f"Replied '{response_list[random_msg]}' ({random_msg}) to @{message.author} [{get_closenesss(random_win, chance)}%]")
        
 
 client.run("{}".format(token))
