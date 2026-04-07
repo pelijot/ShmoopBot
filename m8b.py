@@ -26,7 +26,7 @@ class Magic8Ball(commands.Cog):
     async def on_message(self, message):
         if self.bot.user not in message.mentions:
             return
-        if message.author == self.bot.user and not message.content.startswith("<@{self.bot.application_id}>"):
+        if message.author == self.bot.user and not message.content.startswith(f"<@{self.bot.application_id}>"):
             return
     
         response = random.choice(response_list)
