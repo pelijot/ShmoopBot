@@ -13,7 +13,7 @@ chance = int(config.get("WINCHANCE"))
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = discord.Client(intents=intents)
+bot = discord.Client(intents=intents)
 
 with open("response.list", "r") as f:
     response_list = [line.strip() for line in f if line.strip()]
@@ -26,16 +26,16 @@ def get_closenesss(number, goal):
     return math.trunc(closeness_percent)
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print(f"Logged in as {bot.user}")
 
-@client.event
+@bot.event
 async def on_message(message):
-#    if message.author == client.user:
+#    if message.author == bot.user:
 #        return
 
-    if client.user in message.mentions:
+    if bot.user in message.mentions:
         random_msg = random.randint(0,len(response_list) - 1)
         random_win = random.randint(1,chance)
         if random_win == chance:
@@ -48,7 +48,7 @@ async def on_message(message):
         print(f"Replied '{response_list[random_msg]}' ({random_msg}) to @{message.author} [{get_closenesss(random_win, chance)}%]")
        
 
-client.run("{}".format(token))
+bot.run(token)
 
 
 # https://github.com/justinbaur/m8b/tree/master

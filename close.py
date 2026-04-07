@@ -4,7 +4,7 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 
-token= config.get("TOKEN")
+token = config.get("TOKEN")
 
 AUTO_CLOSE_TAGS = {"Answered", "Implemented", "Resolved", "Done!", "Done", "Solved", "Fixed"}  # case-sensitive
 
@@ -54,4 +54,4 @@ async def on_thread_update(before: discord.Thread, after: discord.Thread):
             print(f"Failed to close thread: {e}")
 
 
-bot.run(TOKEN)
+bot.run(token)
