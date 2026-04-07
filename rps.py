@@ -31,7 +31,7 @@ class RockPaperScissors(commands.Cog):
 
         content = message.content.lower().strip()
 
-        if content in self.choices
+        if content in self.choices:
 
             user_choice = content
             bot_choice = random.choice(self.choices)
