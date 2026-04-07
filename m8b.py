@@ -1,6 +1,7 @@
 import discord
 from dotenv import dotenv_values
 import random
+import math
 import os
 import time
 
@@ -19,6 +20,10 @@ with open("response.list", "r") as f:
 
 print(response_list)
 
+def get_closenesss(number, goal):
+    difference = abs(number - goal)
+    closeness_percent = (1 - difference / goal) * 100
+    return math.trunc(closeness_percent)
 
 
 @client.event
@@ -31,16 +36,16 @@ async def on_message(message):
 #        return
 
     if client.user in message.mentions:
-        lucky_num = random.randint(0,len(response_list) - 1)
-        win_game = random.randint(0,chance)
-        if win_game == chance:
+        random_msg = random.randint(0,len(response_list) - 1)
+        random_win = random.randint(1,chance)
+        if random_win == chance:
             await message.reply("You just won free access to the Steam (PC Version) of A Webbing Journey! Please contact <@701464203252203551>")
-            print(f"@{message.author} won [{win_game}%]")
+            print(f"@{message.author} won [{get_closenesss(random_win, chance)}%]")
             with open("win.log", "a") as winlog:
                 winlog.write(f"{message.author} (ID: {message.author.id}) on {time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime())}\n")
             return
-        await message.reply(response_list[lucky_num])
-        print(f"Replied '{response_list[lucky_num]}' ({lucky_num}) to @{message.author} [{win_game}%]")
+        await message.reply(response_list[random_msg])
+        print(f"Replied '{response_list[random_msg]}' ({random_msg}) to @{message.author} [{get_closenesss(random_win, chance)}% {random_win}]")
        
 
 client.run("{}".format(token))
