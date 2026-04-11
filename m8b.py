@@ -51,7 +51,7 @@ class Magic8Ball(commands.Cog):
     async def on_message(self, message):
         if self.bot.user not in message.mentions:
             return
-        if message.author == self.bot.user:
+        if message.author == self.bot.user and not message.content.startswith("<@1459293475127165070>"):
             return
         if not self.response_list:
             log.warning("Response list is empty, skipping reply")
