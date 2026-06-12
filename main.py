@@ -70,7 +70,7 @@ def main():
         m8b.response_list = await load_responses(config)
         await bot.add_cog(m8b)
         await bot.add_cog(RockPaperScissors(bot))
-#        await bot.add_cog(AutoClose(bot))
+        await bot.add_cog(AutoClose(bot))
         bot.loop.create_task(stdin_listener(bot))
 
     bot.setup_hook = setup
