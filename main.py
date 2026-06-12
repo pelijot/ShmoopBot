@@ -57,7 +57,7 @@ def main():
     token = config.get("TOKEN")
 
     intents = discord.Intents.default()
-#    intents.message_content = True
+    intents.message_content = False
 
     bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -70,7 +70,7 @@ def main():
         m8b.response_list = await load_responses(config)
         await bot.add_cog(m8b)
         await bot.add_cog(RockPaperScissors(bot))
-        await bot.add_cog(AutoClose(bot))
+#        await bot.add_cog(AutoClose(bot))
         bot.loop.create_task(stdin_listener(bot))
 
     bot.setup_hook = setup
