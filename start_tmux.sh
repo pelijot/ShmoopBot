@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SESSION="ShmoopBot"
-e
+
 tmux has-session -t "$SESSION" 2>/dev/null
 if [ $? -eq 0 ]; then
     exit 0
